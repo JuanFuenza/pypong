@@ -19,6 +19,10 @@ class Ball():
         self.rect = pygame.rect.Rect((self.x_pos, self.y_pos, 16, 16))
 
     def move(self):
+        """
+        Limits the movement within certain boundries
+        Returns: None
+        """
         if self.rect.top <= 0 and self.vel_y < 0:
             self.rect.top = 0
             self.vel_y *= -1

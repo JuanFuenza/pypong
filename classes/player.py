@@ -17,6 +17,9 @@ class Player():
         self.rect.center = (self.x_pos, HEIGHT//2)
 
     def handle_keys(self):
+        """
+        Player movement
+        Returns: None"""
         key = pygame.key.get_pressed()
         if key[self.key_up]:
             if self.vel > -self.max_speed:
@@ -36,6 +39,10 @@ class Player():
         pygame.draw.rect(surface, self.color, self.rect)
         
     def collision(self):
+        """
+        Limits the movement within certain boundries
+        Returns: None
+        """
         if self.rect.top <= 0:
             self.rect.top = 0
             self.vel *= -1
