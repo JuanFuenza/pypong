@@ -1,14 +1,6 @@
 import pygame
 from random import randint, random
 
-def collision(object):
-    if object.rect.top <= 0:
-        object.rect.top = 0
-        object.vel *= -1
-    if object.rect.bottom >= HEIGHT:
-        object.rect.bottom = HEIGHT
-        object.vel *= -1
-
 def get_new_ball(ball):
         direction = [-1, 1]
         ball.x_pos = WIDTH // 2
@@ -54,9 +46,18 @@ class Player():
 
     def draw(self, surface):
         pygame.draw.rect(surface, self.color, self.rect)
+        
+    def collision(self):
+        if self.rect.top <= 0:
+            self.rect.top = 0
+            self.vel *= -1
+        if self.rect.bottom >= HEIGHT:
+            self.rect.bottom = HEIGHT
+            self.vel *= -1
 
     def update(self):
         self.handle_keys()
+        self.collision()
 
 class Ball():
     def __init__(self):
@@ -90,12 +91,10 @@ class Ball():
     
     def draw(self, surface):
         pygame.draw.circle(surface, self.color, (self.rect.center), 9)
-
+    
     def update(self):
         self.move()
-    
-    def __del__(self):
-        pass
+
 
 # init pygame
 pygame.init()
@@ -185,15 +184,12 @@ while running:
             p.draw(ds)
             p.update()
 
-            # collision
-            collision(p)
-
             # score
             score(s_1, 50)
             score(s_2, 740)
         
             # ball collision
-            collision_tolerance = 20
+            collision_tolerance = 10
             if ball.rect.colliderect(p.rect): 
                 if int(p.rect.right - ball.rect.left) <= collision_tolerance and ball.vel_x < 0 or int(p.rect.left - ball.rect.right) <= collision_tolerance and ball.vel_x > 0:
                     ball.vel_x *= -1
