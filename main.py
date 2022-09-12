@@ -9,7 +9,20 @@ def collision(object):
         object.rect.bottom = HEIGHT
         object.vel *= -1
 
-class Player(object):
+def get_new_ball(ball):
+        direction = [-1, 1]
+        ball.x_pos = WIDTH // 2
+        ball.y_pos = randint(0, HEIGHT - 10)
+        ball.vel_x = randint(3, 5) * direction[randint(0,1)]
+        ball.acc = random
+        ball.vel_y = randint(3, 9)
+
+def score(score, x):
+    text = font.render(f"Score: {score}", False, "white")
+    text_rect = text.get_rect(center = (x, 10))
+    ds.blit(text, text_rect)
+
+class Player():
     def __init__(self, key_up: pygame.key, key_down: pygame.key, x_pos: int):
         self.vel = 0
         self.acc = 0.5
@@ -45,7 +58,7 @@ class Player(object):
     def update(self):
         self.handle_keys()
 
-class Ball(object):
+class Ball():
     def __init__(self):
         self.vel_x = 5
         self.vel_y = 5
@@ -61,10 +74,10 @@ class Ball(object):
         self.rect = pygame.rect.Rect((self.x_pos, self.y_pos, 16, 16))
 
     def move(self):
-        if self.rect.top <= 0:
+        if self.rect.top <= 0 and self.vel_y < 0:
             self.rect.top = 0
             self.vel_y *= -1
-        if self.rect.bottom >= HEIGHT:
+        if self.rect.bottom >= HEIGHT and self.vel_y > 0:
             self.rect.bottom = HEIGHT
             self.vel_y *= -1
 
@@ -95,6 +108,9 @@ pygame.display.set_caption("Pygame!")
 FPS = 60
 clock = pygame.time.Clock()
 
+# fonts
+font = pygame.font.Font("assets/fonts/VCR_OSD_MONO_1.001.ttf", 20)
+
 # keys
 # player 1
 UP = pygame.K_UP
@@ -112,6 +128,10 @@ players = [player, player_2]
 
 # ball
 ball = Ball()
+
+# score 
+s_1 = 0
+s_2 = 0
 
 # game main loop
 running = True
@@ -133,21 +153,25 @@ while running:
 
         # collision
         collision(p)
+
+        # score
+        score(s_1, 50)
+        score(s_2, 740)
     
         # ball collision
         collision_tolerance = 20
         if ball.rect.colliderect(p.rect): 
             if int(p.rect.right - ball.rect.left) <= collision_tolerance and ball.vel_x < 0 or int(p.rect.left - ball.rect.right) <= collision_tolerance and ball.vel_x > 0:
                 ball.vel_x *= -1
-                ball.vel_x = round(ball.vel_x * 1.1)
+                ball.vel_x = round(ball.vel_x * 1.2)
     
-    if ball.rect.x > WIDTH + 100 or ball.rect.x < 0 - 100:
-        direction = [-1, 1]
-        ball.x_pos = WIDTH // 2
-        ball.y_pos = randint(0, HEIGHT - 10)
-        ball.vel_x = randint(3, 5) * direction[randint(0,1)]
-        ball.acc = random
-        ball.vel_y = randint(3, 9)
+    if ball.rect.x > WIDTH + 100:
+        get_new_ball(ball)
+        s_1 += 1
+
+    if ball.rect.x < 0 - 100:
+        get_new_ball(ball)
+        s_2 += 1
 
 
     # update
